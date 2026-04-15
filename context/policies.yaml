@@ -1,0 +1,27 @@
+policies:
+  PII_IN_PROMPT:
+    description: Personally identifiable information detected in the prompt sent to an LLM.
+    severity: high
+    detection: regex
+  CREDENTIALS_IN_PROMPT:
+    description: Secrets, API keys, passwords, or connection strings detected in the prompt.
+    severity: critical
+    detection: regex
+  CREDENTIALS_IN_OUTPUT:
+    description: Secrets, API keys, passwords, or connection strings detected in the model output.
+    severity: critical
+    detection: regex
+  OFF_HOURS_USAGE:
+    description: AI usage outside business hours (08:00–18:00 UTC).
+    severity: low
+    detection: timestamp
+  BULK_DATA_EXTRACTION:
+    description: Unusually large token count suggesting bulk data exfiltration.
+    severity: high
+    detection: token_count
+    threshold: 1000
+
+business_hours:
+  start: 8
+  end: 18
+  timezone: UTC

@@ -1,0 +1,52 @@
+[
+  {
+    "event_id": "evt-001",
+    "user": "alice@example.com",
+    "user_role": "standard_user",
+    "team": "engineering",
+    "timestamp": "2026-04-13T03:00:00Z",
+    "prompt": "Debug this connection: postgresql://admin:secret123@db.prod:5432/customers",
+    "output": "The connection string looks correct. Try checking firewall rules.",
+    "token_count": 150
+  },
+  {
+    "event_id": "evt-002",
+    "user": "bob@example.com",
+    "user_role": "admin",
+    "team": "hr",
+    "timestamp": "2026-04-13T14:22:00Z",
+    "prompt": "Can you help me find all employees with SSN 123-45-6789 in our records?",
+    "output": "I cannot help with looking up personal identifiers.",
+    "token_count": 80
+  },
+  {
+    "event_id": "evt-003",
+    "user": "carol@example.com",
+    "user_role": "standard_user",
+    "team": "marketing",
+    "timestamp": "2026-04-13T11:15:00Z",
+    "prompt": "Summarize the latest press release for a social media post.",
+    "output": "Here's a two-sentence summary of your press release...",
+    "token_count": 120
+  },
+  {
+    "event_id": "evt-004",
+    "user": "dave@example.com",
+    "user_role": "privileged",
+    "team": "data",
+    "timestamp": "2026-04-13T10:00:00Z",
+    "prompt": "Extract and summarize all customer records for Q4 analysis.",
+    "output": "Here are the 5000 customer records grouped by region and revenue tier...",
+    "token_count": 12000
+  },
+  {
+    "event_id": "evt-005",
+    "user": "eve@example.com",
+    "user_role": "external",
+    "team": "contractor",
+    "timestamp": "2026-04-13T22:45:00Z",
+    "prompt": "Generate a marketing email. My API key is sk-abc123def456ghi789jkl012mno345pq",
+    "output": "Here's a draft email. Also, you should not share API keys.",
+    "token_count": 200
+  }
+]

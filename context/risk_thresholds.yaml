@@ -1,0 +1,47 @@
+scoring_factors:
+  data_sensitivity:
+    weight: 0.35
+    values:
+      credentials: 100
+      pii: 80
+      proprietary: 60
+      internal: 30
+      public: 10
+  policy_relevance:
+    weight: 0.30
+    values:
+      direct_violation: 100
+      potential_violation: 70
+      best_practice: 40
+      informational: 10
+  frequency:
+    weight: 0.20
+    values:
+      repeat_offender: 100
+      recurring: 70
+      occasional: 40
+      first_occurrence: 30
+  user_role:
+    weight: 0.15
+    values:
+      admin: 80
+      privileged: 60
+      standard_user: 20
+      external: 90
+
+risk_levels:
+  critical:
+    min_score: 90
+    alert: immediate
+  high:
+    min_score: 70
+    alert: within_1_hour
+  medium:
+    min_score: 40
+    alert: daily_summary
+  low:
+    min_score: 20
+    alert: weekly_report
+  info:
+    min_score: 0
+    alert: monthly_report

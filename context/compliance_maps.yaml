@@ -1,0 +1,101 @@
+frameworks:
+  gdpr:
+    name: GDPR
+    mappings:
+      PII_IN_PROMPT:
+        articles:
+          - "Art. 5 (data minimisation)"
+          - "Art. 32 (security of processing)"
+        description: Personal data must be minimized and protected.
+      CREDENTIALS_IN_PROMPT:
+        articles:
+          - "Art. 32 (security of processing)"
+        description: Security of processing requires safeguarding of authentication data.
+      CREDENTIALS_IN_OUTPUT:
+        articles:
+          - "Art. 32 (security of processing)"
+        description: Security of processing requires safeguarding of authentication data.
+      BULK_DATA_EXTRACTION:
+        articles:
+          - "Art. 5 (data minimisation)"
+          - "Art. 25 (privacy by design)"
+        description: Data minimisation and privacy by design.
+
+  soc2:
+    name: SOC2
+    mappings:
+      PII_IN_PROMPT:
+        controls:
+          - "CC6.1"
+          - "CC6.7"
+        description: Logical access and data transmission controls.
+      CREDENTIALS_IN_PROMPT:
+        controls:
+          - "CC6.1"
+          - "CC6.3"
+        description: Access controls and credential management.
+      CREDENTIALS_IN_OUTPUT:
+        controls:
+          - "CC6.1"
+          - "CC6.3"
+        description: Access controls and credential management.
+      OFF_HOURS_USAGE:
+        controls:
+          - "CC7.2"
+        description: Anomalous activity monitoring.
+      BULK_DATA_EXTRACTION:
+        controls:
+          - "CC6.7"
+        description: Data transmission restrictions.
+
+  iso27001:
+    name: ISO 27001
+    mappings:
+      PII_IN_PROMPT:
+        controls:
+          - "A.8.2.3"
+          - "A.13.2.1"
+        description: Information handling and transfer.
+      CREDENTIALS_IN_PROMPT:
+        controls:
+          - "A.9.2.4"
+          - "A.9.4.3"
+        description: Secret authentication information management.
+      CREDENTIALS_IN_OUTPUT:
+        controls:
+          - "A.9.2.4"
+          - "A.9.4.3"
+        description: Secret authentication information management.
+      OFF_HOURS_USAGE:
+        controls:
+          - "A.12.4.1"
+        description: Event logging.
+      BULK_DATA_EXTRACTION:
+        controls:
+          - "A.13.2.1"
+        description: Transfer of information.
+
+  nist_ai_rmf:
+    name: NIST AI RMF
+    mappings:
+      PII_IN_PROMPT:
+        functions:
+          - "GOVERN-1.1"
+          - "MAP-4.1"
+        description: Accountability and risk identification.
+      CREDENTIALS_IN_PROMPT:
+        functions:
+          - "MANAGE-2.2"
+        description: Risk response to identified threats.
+      CREDENTIALS_IN_OUTPUT:
+        functions:
+          - "MANAGE-2.2"
+        description: Risk response to identified threats.
+      OFF_HOURS_USAGE:
+        functions:
+          - "MEASURE-2.7"
+        description: Monitoring AI system performance.
+      BULK_DATA_EXTRACTION:
+        functions:
+          - "MANAGE-3.1"
+        description: AI system risk management.
