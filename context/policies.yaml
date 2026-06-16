@@ -12,7 +12,7 @@ policies:
     severity: critical
     detection: regex
   OFF_HOURS_USAGE:
-    description: AI usage outside business hours (08:00–18:00 UTC).
+    description: AI usage outside business hours (see business_hours block below).
     severity: low
     detection: timestamp
   BULK_DATA_EXTRACTION:
@@ -24,4 +24,7 @@ policies:
 business_hours:
   start: 8
   end: 18
-  timezone: UTC
+  # IANA timezone name (e.g. UTC, America/New_York, Europe/London).
+  # Timestamps (assumed UTC) are converted to this zone before the
+  # start/end window is applied. EST/EDT (or any DST) handled automatically.
+  timezone: America/New_York

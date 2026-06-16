@@ -46,7 +46,7 @@ An event with:
 1. **PII_IN_PROMPT** (high) — any PII pattern matches `prompt`.
 2. **CREDENTIALS_IN_PROMPT** (critical) — any credential pattern matches `prompt`.
 3. **CREDENTIALS_IN_OUTPUT** (critical) — any credential pattern matches `output`.
-4. **OFF_HOURS_USAGE** (low) — `timestamp` hour is outside 08:00–18:00 UTC.
+4. **OFF_HOURS_USAGE** (low) — the event's `timestamp` (assumed UTC) falls outside business hours after conversion to the configured timezone. The window is read from `context/policies.yaml` → `business_hours` (`start`, `end`, `timezone`). The `timezone` is an IANA name (e.g. `UTC`, `America/New_York`), so DST (EST↔EDT) is handled automatically; set it to your operating zone. Defaults to 08:00–18:00 UTC if unset.
 5. **BULK_DATA_EXTRACTION** (high) — `token_count` > 1000.
 
 ## Instructions

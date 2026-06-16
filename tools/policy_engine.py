@@ -1,6 +1,54 @@
 import yaml
 import os
 import re
+from datetime import datetime, timezone
+
+try:
+    from zoneinfo import ZoneInfo
+except Exception:  # pragma: no cover
+    ZoneInfo = None
+
+
+def _business_hours():
+    """Load the business-hours window (start, end, timezone) from
+    context/policies.yaml. Falls back to 08:00-18:00 UTC if unset."""
+    try:
+        cfg = load_policies().get('business_hours', {}) or {}
+    except Exception:
+        cfg = {}
+    return (
+        int(cfg.get('start', 8)),
+        int(cfg.get('end', 18)),
+        str(cfg.get('timezone', 'UTC')),
+    )
+
+
+def _local_hour(timestamp: str, tz_name: str):
+    """Parse an ISO-8601 timestamp (UTC, possibly 'Z'/fractional seconds)
+    and return (hour_of_day, tz_abbrev) in the configured timezone.
+    Returns (None, None) if it can't be parsed."""
+    if not timestamp:
+        return None, None
+    ts = timestamp.strip().replace('Z', '+00:00')
+    try:
+        dt = datetime.fromisoformat(ts)
+    except ValueError:
+        m = re.match(r'(.*\.\d{6})\d*([+-]\d{2}:\d{2})?$', ts)
+        if not m:
+            return None, None
+        try:
+            dt = datetime.fromisoformat(m.group(1) + (m.group(2) or '+00:00'))
+        except ValueError:
+            return None, None
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    if tz_name and tz_name.upper() != 'UTC' and ZoneInfo is not None:
+        try:
+            local = dt.astimezone(ZoneInfo(tz_name))
+            return local.hour, local.tzname()
+        except Exception:
+            pass  # unknown tz / no tzdata -> fall back to UTC
+    return dt.astimezone(timezone.utc).hour, 'UTC'
 
 
 def load_policies():
@@ -72,19 +120,14 @@ def check_event(event: dict) -> list:
                 'severity': 'critical',
             })
 
-    hour = None
-    timestamp = event.get('timestamp', '')
-    if timestamp:
-        try:
-            hour = int(timestamp[11:13])
-        except (ValueError, IndexError):
-            pass
+    start_hour, end_hour, tz_name = _business_hours()
+    hour, tz_abbrev = _local_hour(event.get('timestamp', ''), tz_name)
 
-    if hour is not None and (hour < 8 or hour >= 18):
+    if hour is not None and (hour < start_hour or hour >= end_hour):
         violations.append({
             'policy_id': 'OFF_HOURS_USAGE',
             'severity': 'low',
-            'detail': f'Usage at hour {hour}:00 UTC',
+            'detail': f'Usage at hour {hour}:00 {tz_abbrev}',
         })
 
     token_count = event.get('token_count', 0)
