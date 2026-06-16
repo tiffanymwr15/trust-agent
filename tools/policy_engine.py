@@ -26,10 +26,25 @@ CREDENTIAL_PATTERNS = {
     'private_key': r'-----BEGIN\s+(RSA\s+)?PRIVATE\s+KEY-----',
 }
 
+# Aperture wraps session identity into the `prompt` field as metadata, e.g.:
+#   "Session for user user@example.com: 4 request(s), models: ..."
+# This is gateway-generated identity context, NOT user-authored prompt content,
+# so PII scanning must strip it first to avoid false-positive email matches.
+APERTURE_META_PREFIX = re.compile(
+    r'^Session for user\s+\S+:\s*\d+\s+request\(s\),\s*models:.*$',
+    re.IGNORECASE | re.MULTILINE,
+)
+
+
+def strip_session_metadata(prompt: str) -> str:
+    """Remove Aperture's session-identity metadata so PII checks only see
+    actual user-authored prompt content."""
+    return APERTURE_META_PREFIX.sub('', prompt).strip()
+
 
 def check_event(event: dict) -> list:
     violations = []
-    prompt = event.get('prompt', '')
+    prompt = strip_session_metadata(event.get('prompt', ''))
     output = event.get('output', '')
 
     for pattern_name, regex in PII_PATTERNS.items():
