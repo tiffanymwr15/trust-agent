@@ -61,6 +61,32 @@ Weighted factor sum, 0–100 scale:
 }
 ```
 
+## Aggregating across many events (avoid low-severity saturation)
+
+The scoring above is **per-event**. When rolling many events into a single overall
+score, do **not** simply sum severity weights and clamp to 100 — a high *volume* of
+low-severity findings (e.g. 50 `OFF_HOURS_USAGE` flags) will saturate the total and
+falsely read "critical".
+
+The repo's batch flow sidesteps this by reporting a `severity_breakdown` (counts per
+level) rather than one rolled-up number — counts can't saturate. If you do need a single
+aggregate score, bound it by the **highest severity actually present**:
+
+- **Floor** = bottom of that severity's band, so a single real `critical` finding always
+  reads critical even though its additive weight alone is small.
+- **Cap** = top of that severity's band, so volume of lower-severity findings can elevate
+  the score *within* the band but never cross into a higher one.
+
+```python
+# highest = most severe level present among the violations
+floor = risk_levels[highest]['min_score']          # e.g. critical -> 90
+cap   = {'critical':100,'high':89,'medium':69,'low':39,'info':19}[highest]
+score = max(min(additive_total, cap, 100), floor)
+```
+
+Result: 50 low-only findings → low band (never critical); 1 credential leak → critical
+regardless of how few findings there are.
+
 ## Pairs well with
 
 - `analyze-risk` (upstream)
