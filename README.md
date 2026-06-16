@@ -190,12 +190,35 @@ trust-agent is one layer in a three-part AI governance stack:
 
 Together this is the full loop: author policy, deploy controls, observe and alert, generate evidence.
 
+## Recommended deployment: Tailnet + Aperture
+
+trust-agent runs standalone on any JSON event stream, but it is **best paired with an
+[Aperture](https://github.com/) AI gateway fronted by a Tailscale tailnet**. That upstream gives
+trust-agent the clean, identity-attributed event feed it is designed for:
+
+- **Aperture** sits between users and LLM providers and emits a per-session audit trail —
+  who, which model, tokens, cost, timestamp — in the exact shape `run_batch.py` consumes.
+  No manual log wrangling; point the pipeline at Aperture's session export (or poll its API).
+- **Tailnet (Tailscale)** supplies the identity layer. Every request is attributed to a real
+  tailnet member with no API keys in repos, so the `user` / `user_role` fields are trustworthy
+  and the compliance mappings (access control, accountability) actually hold up in an audit.
+
+Without this pairing you must supply your own event source and identity attribution, and PII/
+identity fields may be unreliable. With it, the loop is fully automated and audit-ready.
+
+> **Note:** When ingesting directly from Aperture, the gateway wraps session identity into the
+> `prompt` field (`"Session for user <email>: N request(s), models: ..."`). `tools/policy_engine.py`
+> strips this metadata before PII scanning so the wrapper email does not false-positive every
+> session. See `skills/check-policy/SKILL.md` for details.
+
 ## Requirements
 
 - Python 3.10+
 - PyYAML 6.0+
 
 Runs on any system with Python. No cloud dependencies, no external services, no Monday.com integration. The tools use relative paths so the project is portable.
+
+**Recommended (not required):** A Tailscale tailnet + Aperture AI gateway upstream — this is the deployment the skills work best with, supplying an identity-attributed, audit-ready event feed automatically. See **Recommended deployment: Tailnet + Aperture** above.
 
 ## Extending
 
